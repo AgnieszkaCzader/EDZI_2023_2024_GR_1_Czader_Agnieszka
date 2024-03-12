@@ -1,1 +1,67 @@
+import requests
+from bs4 import BeautifulSoup
+from urllib.parse import urljoin
+import random
+
+def get_links(url):
+    try:
+        response = requests.get(url)
+        response.raise_for_status() 
+    except requests.exceptions.RequestException as e:
+        print(f"Error {url}: {e}")
+        return []
+
+    bs = BeautifulSoup(response.text, 'html.parser')
+    links = bs.find_all('a', href=True)
+    absolutes = [urljoin(url, link['href']) for link in links]
+    return absolutes
+
+def choose_random_link(links):
+    return random.choice(links)
+
+def main():
+    website_url = "https://www.onet.pl/"  
+    all_links = set()
+    visited_links = set()
+    count = 0
+
+    while count < 100:
+        links = get_links(website_url)
+
+        if not links:
+            print(f"Nie znaleziono linków na stronie {website_url}. Powrót do poprzedniej strony.")
+            if visited_links:
+                website_url = visited_links.pop()
+                continue
+            else:
+                print("No previous links to return to. Exiting.")
+                break
+
+        unvisited_links = set(links) - all_links
+
+        if not unvisited_links:
+            print("No more unvisited links. Searching in visited links.")
+            unvisited_links = visited_links - all_links
+
+            if not unvisited_links:
+                print("No more links to search. Returning to the previous link.")
+                if visited_links:
+                    website_url = visited_links.pop()
+                    continue
+                else:
+                    print("Brak więcej linków.")
+                    break
+
+        next_link = choose_random_link(list(unvisited_links))
+        visited_links.add(next_link)
+        all_links.add(next_link)
+
+        print(f"Link: {next_link}")
+        website_url = next_link
+        count += 1
+
+    print(f"Znaleziono {count} linków.")
+
+if __name__ == "__main__":
+    main()
 
