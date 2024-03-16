@@ -5,10 +5,10 @@ import random
 
 def get_links(url):
     try:
-        response = requests.get(url)
-        response.raise_for_status() 
+        response = requests.get(url, verify=True)  
+        response.raise_for_status()
     except requests.exceptions.RequestException as e:
-        print(f"Error {url}: {e}")
+        print(f"Błąd {url}: {e}")
         return []
 
     bs = BeautifulSoup(response.text, 'html.parser')
@@ -16,11 +16,18 @@ def get_links(url):
     absolutes = [urljoin(url, link['href']) for link in links]
     return absolutes
 
+def is_alive(url):
+    try:
+        response = requests.head(url, allow_redirects=True)  
+        return response.status_code < 400
+    except requests.exceptions.RequestException:
+        return False
+
 def choose_random_link(links):
     return random.choice(links)
 
 def main():
-    website_url = "https://www.onet.pl/"  
+    website_url = "https://www.onet.pl/"
     all_links = set()
     visited_links = set()
     count = 0
@@ -28,40 +35,24 @@ def main():
     while count < 100:
         links = get_links(website_url)
 
-        if not links:
-            print(f"Nie znaleziono linków na stronie {website_url}. Powrót do poprzedniej strony.")
-            if visited_links:
-                website_url = visited_links.pop()
-                continue
-            else:
-                print("No previous links to return to. Exiting.")
-                break
-
         unvisited_links = set(links) - all_links
 
-        if not unvisited_links:
-            print("No more unvisited links. Searching in visited links.")
-            unvisited_links = visited_links - all_links
-
-            if not unvisited_links:
-                print("No more links to search. Returning to the previous link.")
-                if visited_links:
-                    website_url = visited_links.pop()
-                    continue
-                else:
-                    print("Brak więcej linków.")
-                    break
-
-        next_link = choose_random_link(list(unvisited_links))
-        visited_links.add(next_link)
-        all_links.add(next_link)
-
-        print(f"Link: {next_link}")
-        website_url = next_link
-        count += 1
+        if unvisited_links:  
+            next_link = choose_random_link(list(unvisited_links))
+            if is_alive(next_link):
+                visited_links.add(next_link)
+                all_links.add(next_link)
+                print(f"Link: {next_link}")
+                website_url = next_link
+                count += 1
+            
+        else:
+            if visited_links:
+                website_url = visited_links.pop()
+            else:
+                break
 
     print(f"Znaleziono {count} linków.")
 
 if __name__ == "__main__":
     main()
-
