@@ -6,6 +6,14 @@ import json
 from google.colab import files
 import robotexclusionrulesparser
 import sys
+import urllib.parse
+import re
+
+from google.colab import drive
+drive.mount('/content/drive')
+
+
+headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3', 'Accept-Language': 'en-US,en;q=0.9'}
 
 # Sprawdzenie z plikiem robots.txt
 def is_allowed_by_robots_txt(url):
@@ -13,100 +21,35 @@ def is_allowed_by_robots_txt(url):
     rp.fetch(url + '/robots.txt')
     return rp.is_allowed(url, '*')
 
-# Wyszukiwanie recenzji na Rotten Tomatoes 
-def search_rotten_tomatoes(movie_title):
-    # Funkcja Search
-    search_url = f"https://www.rottentomatoes.com/search?search={movie_title.replace(' ', '%20')}"
+# Wyszukiwanie na stronie rotten tomatoes
+def rotten_tomatoes(search_url, film_title):
+    encoded_title = urllib.parse.quote(film_title)
+    response = requests.get(search_url + encoded_title, headers=headers)
+    soup = BeautifulSoup(response.text, 'html.parser')
 
-    try:
-        # Sprawdzenie jest zgodny z plikiem robots.txt
-        if not is_allowed_by_robots_txt("https://www.rottentomatoes.com"):
-            print("Strona Rotten Tomatoes nie jest zgodna z plikiem robots.txt")
-            return None
+    film_part = soup.find('search-page-result', type='movie')
 
-        # Zapytanie GET
-        response = requests.get(search_url, headers=headers)
-        response.raise_for_status()  
+    if film_part is None:
+        print("Brak : ", film_title)
+        return
+    
+    filmy = film_part.select('search-page-media-row')
 
-        # Analiza kodu HTML 
-        soup = BeautifulSoup(response.content, 'html.parser')
+    rate = None
 
-        # Sprawdzenie czy znaleziono wyniki wyszukiwania
-        results = soup.find_all('div', class_='search-item-result')
-        if results:
-            
-            first_result = results[0]
-            link = first_result.find('a', class_='unstyled articleLink')
-            if link:
-                movie_url = "https://www.rottentomatoes.com" + link['href']
-                print(f"Znaleziono recenzje na Rotten Tomatoes dla filmu '{movie_title}': {movie_url}")
-                return movie_url
-            else:
-                print(f"Nie udało się znaleźć recenzji na Rotten Tomatoes dla filmu '{movie_title}'.")
-                return None
-        else:
-            print(f"Nie udało się znaleźć recenzji na Rotten Tomatoes dla filmu '{movie_title}'.")
-            return None
-    except requests.exceptions.RequestException as e:
-        print(f"Wystąpił błąd podczas pobierania strony Rotten Tomatoes: {e}")
-        return None
+    for film in filmy:
+        title = film.find('a', slot='title')
 
-# Wyszukiwanie recenzji na stronie Rotten Tomatoes
-def search_rotten_tomatoes_review(movie_title):
-    # Szukanie recenzji na Rotten Tomatoes
-    movie_url = search_rotten_tomatoes(movie_title)
-    visited_links = []  
+        if title.text.strip() == film_title.strip() and 'tomatometerscore' in film.attrs:
+            rate = film['tomatometerscore']
+            return rate.strip()
 
-    if movie_url:
-        
-        while True:
-            visited_links.append(movie_url)  
-            try:
-                
-                response = requests.get(movie_url, headers=headers)
-                response.raise_for_status()  
+    return None
 
-                soup = BeautifulSoup(response.content, 'html.parser')
-
-                script_tag = soup.find('script', id='scoreDetails')
-                if script_tag:
-                    script_content = script_tag.contents[0]
-                    score_data = json.loads(script_content)
-
-                    tomatometer_percentage = score_data['modal']['tomatometerScoreAll']['value']
-                    audience_percentage = score_data['modal']['audienceScoreAll']['value']
-
-                    print(f"Recenzja na stronie Rotten Tomatoes: {movie_url}")
-                    print(f"Wynik procentowy tomatometru: {tomatometer_percentage}%")
-                    print(f"Wynik procentowy publiczności: {audience_percentage}%")
-                    return {
-                        "ocena_rotten_tomatoes": tomatometer_percentage,
-                        "ocena_publicznosci_rotten_tomatoes": audience_percentage
-                    }
-                    break
-
-                # Link do następnej strony
-                next_page_link = soup.find('a', class_='btn btn-xs btn-secondary')
-
-                # Sprawdzenie 
-                if next_page_link:
-                    movie_url = "https://www.rottentomatoes.com" + next_page_link['href']
-                else:
-                    print("Nie znaleziono więcej stron z recenzjami.")
-                    break
-
-                # Opóźnienie 
-                time.sleep(2)
-            except requests.exceptions.RequestException as e:
-                print(f"Wystąpił błąd podczas pobierania strony Rotten Tomatoes: {e}")
-                break
-    else:
-        print(f"Nie znaleziono recenzji na stronie Rotten Tomatoes dla filmu '{movie_title}'.")
-
-    return {
-        "ocena_rotten_tomatoes": None,
-        "ocena_publicznosci_rotten_tomatoes": None
-    }
+def search_rotten_tomatoes_review(title):
+    search_url = 'https://www.rottentomatoes.com/search?search='
+    rating = rotten_tomatoes(search_url, title)
+    return {"ocena_rotten_tomatoes": rating}
 
 # Strona IMDb
 url = "https://www.imdb.com/chart/top/"
@@ -117,12 +60,12 @@ headers = {
 }
 
 # Lista do przechowywania danych o filmach
-movies_data = []
+filmy_data = []
 
-count = 0  
+count = 0
 
 try:
-    # Sprawdzenie jest zgodny z plikiem robots.txt
+    # Sprawdzenie zgodności z plikiem robots.txt
     if not is_allowed_by_robots_txt("https://www.imdb.com"):
         print("Strona IMDb nie jest zgodna z plikiem robots.txt")
         sys.exit()
@@ -130,22 +73,21 @@ try:
 
     # Wysłanie zapytania GET
     response = requests.get(url, headers=headers)
-    response.raise_for_status()  
+    response.raise_for_status()
 
-    # Analiza kodu HTML 
+    # Analiza kodu HTML
     soup = BeautifulSoup(response.content, 'html.parser')
 
-    # Znalezienie wszystkich elementów 
-    movie_links = soup.find_all('a', class_='ipc-title-link-wrapper')
+    # Znalezienie wszystkich elementów
+    film_links = soup.find_all('a', class_='ipc-title-link-wrapper')
 
     # Tytuły filmów
-    for index, link in enumerate(movie_links, start=1):
+    for index, link in enumerate(film_links, start=1):
         title = link.h3.text.strip()
         title = f"{title.split('.')[1].strip()}"
         ranking_imdb = index
         rating_element = link.find_next('span', class_='ipc-rating-star')
         ocena = float(rating_element.text.strip().split()[0]) if rating_element else None
-         
 
         # Szukanie recenzji na Rotten Tomatoes
         rotten_tomatoes_ratings = search_rotten_tomatoes_review(title)
@@ -154,25 +96,25 @@ try:
         if count == 101:
             break
 
-        # Zapisywanie danych 
-        movie_data = {
+        # Zapisywanie danych
+        film_data = {
             "tytul_filmu": title,
             "ranking_imdb": ranking_imdb,
             "ocena_imdb": ocena,
-            **rotten_tomatoes_ratings  
+            **rotten_tomatoes_ratings
         }
 
-        movies_data.append(movie_data)
+        filmy_data.append(film_data)
 
-        # Opóźnienie 
+        # Opóźnienie
         time.sleep(2)
 
     # Zapisanie danych do pliku JSON
-    with open('movies_data.json', 'w') as json_file:
-        json.dump(movies_data, json_file, indent=4)
+    with open('filmy_dane.json', 'w') as json_file:
+        json.dump(filmy_data, json_file, indent=4)
 
     # Pobranie pliku JSON na komputer
-    files.download('movies_data.json')
+    files.download('filmy_dane.json')
     print("Dane zapisano do pliku movies_data.json")
 
 except requests.exceptions.RequestException as e:
