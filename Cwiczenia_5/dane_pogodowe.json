@@ -1,0 +1,164 @@
+{
+    "Warszawa": [
+        {
+            "id_stacji": "12375",
+            "temperatura": 7.4,
+            "data_pomiaru": "2024-04-17",
+            "godzina_pomiaru": "9",
+            "suma_opadu": 1.4,
+            "cisnienie": 1002.9
+        }
+    ],
+    "Kraków": [
+        {
+            "id_stacji": "12566",
+            "temperatura": 6.3,
+            "data_pomiaru": "2024-04-17",
+            "godzina_pomiaru": "9",
+            "suma_opadu": 0.0,
+            "cisnienie": 1004.8
+        }
+    ],
+    "Łódź": [
+        {
+            "id_stacji": "12465",
+            "temperatura": 5.2,
+            "data_pomiaru": "2024-04-17",
+            "godzina_pomiaru": "9",
+            "suma_opadu": 0.4,
+            "cisnienie": 1003.9
+        }
+    ],
+    "Wrocław": [
+        {
+            "id_stacji": "12424",
+            "temperatura": 5.2,
+            "data_pomiaru": "2024-04-17",
+            "godzina_pomiaru": "9",
+            "suma_opadu": 0.4,
+            "cisnienie": 1006.4
+        }
+    ],
+    "Poznań": [
+        {
+            "id_stacji": "12330",
+            "temperatura": 5.6,
+            "data_pomiaru": "2024-04-17",
+            "godzina_pomiaru": "9",
+            "suma_opadu": 4.8,
+            "cisnienie": 1006.6
+        }
+    ],
+    "Gdańsk": [
+        {
+            "id_stacji": "12155",
+            "temperatura": 6.3,
+            "data_pomiaru": "2024-04-17",
+            "godzina_pomiaru": "9",
+            "suma_opadu": 13.9,
+            "cisnienie": 1005.0
+        }
+    ],
+    "Szczecin": [
+        {
+            "id_stacji": "12205",
+            "temperatura": 6.6,
+            "data_pomiaru": "2024-04-17",
+            "godzina_pomiaru": "9",
+            "suma_opadu": 2.9,
+            "cisnienie": 1007.6
+        }
+    ],
+    "Bydgoszcz": [],
+    "Lublin": [
+        {
+            "id_stacji": "12495",
+            "temperatura": 8.4,
+            "data_pomiaru": "2024-04-17",
+            "godzina_pomiaru": "9",
+            "suma_opadu": 0.0,
+            "cisnienie": 1002.9
+        }
+    ],
+    "Białystok": [
+        {
+            "id_stacji": "12295",
+            "temperatura": 8.3,
+            "data_pomiaru": "2024-04-17",
+            "godzina_pomiaru": "9",
+            "suma_opadu": 0.5,
+            "cisnienie": 1002.3
+        }
+    ],
+    "Katowice": [
+        {
+            "id_stacji": "12560",
+            "temperatura": 5.0,
+            "data_pomiaru": "2024-04-17",
+            "godzina_pomiaru": "9",
+            "suma_opadu": 4.3,
+            "cisnienie": 1005.1
+        }
+    ],
+    "Kielce": [
+        {
+            "id_stacji": "12570",
+            "temperatura": 7.8,
+            "data_pomiaru": "2024-04-17",
+            "godzina_pomiaru": "9",
+            "suma_opadu": 0.0,
+            "cisnienie": 1003.5
+        }
+    ],
+    "Rzeszów": [
+        {
+            "id_stacji": "12580",
+            "temperatura": 9.2,
+            "data_pomiaru": "2024-04-17",
+            "godzina_pomiaru": "9",
+            "suma_opadu": 0.1,
+            "cisnienie": 1003.3
+        }
+    ],
+    "Olsztyn": [
+        {
+            "id_stacji": "12272",
+            "temperatura": 4.3,
+            "data_pomiaru": "2024-04-17",
+            "godzina_pomiaru": "9",
+            "suma_opadu": 6.1,
+            "cisnienie": 1004.1
+        }
+    ],
+    "min_temperature": {
+        "value": 4.3,
+        "city": "Olsztyn"
+    },
+    "max_temperature": {
+        "value": 9.2,
+        "city": "Rzeszów"
+    },
+    "min_rain": {
+        "value": 0.0,
+        "cities": [
+            "Kraków",
+            "Lublin",
+            "Kielce"
+        ]
+    },
+    "max_rain": {
+        "value": 13.9,
+        "city": "Gdańsk"
+    },
+    "min_pressure": {
+        "value": 1002.3,
+        "city": "Białystok"
+    },
+    "max_pressure": {
+        "value": 1007.6,
+        "city": "Szczecin"
+    },
+    "average_temperature": 6.584615384615384,
+    "average_rain": 2.6769230769230767,
+    "average_pressure": 1004.4923076923077
+}
