@@ -1,0 +1,114 @@
+ID Umiejętności;umiejętności
+1;SQL
+2;Microsoft Power BI
+3;Cognos
+4;AWS
+5;Python
+6;DynamoDB
+7;BI
+8;SAP
+9;DWH
+10;PL/SQL
+11;Oracle
+12;Informatica PowerCenter
+13;Google Cloud Platform
+14;Scala
+15;Apache Spark
+16;Snowflake Data Cloud
+17;Microsoft Azure
+18;Linux
+19;CentOS
+20;Ubuntu
+21;Ansible
+22;Gitlab
+23;KQL
+24;SPL
+25;Elasticsearch
+26;Databricks
+27;dbt
+28;Airflow
+29;Google BigQuery
+30;T-SQL
+31;Jenkins
+32;Puppet
+33;Chef
+34;GitHub
+35;Microsoft SQL Server
+36;COREP
+37;Regulatory reporting
+38;Liquidity risk
+39;Moody's regulatory reporting
+40;Moodys regulatory reporting
+41;Windows Server
+42;Machine Learning
+43;Java
+44;Groovy
+45;Spring boot
+46;Spring Batch
+47;Spring Cloud
+48;Spring Cloud Gateway
+49;Eureka
+50;Apache Airflow
+51;Pandas
+52;Pyspark
+53;Numpy
+54;Git
+55;PowerBI
+56;Tableau
+57;Azure SQL
+58;Spark
+59;Hadoop
+60;Impala
+61;Jira
+62;Bitbucket
+63;Azure Cloud
+64;Azure DevOps
+65;Qlik
+66;Agile
+67;PySpark
+68;ETL
+69;Kafka
+70;noSQL
+71;Bash
+72;AAP
+73;Azure
+74;RDS
+75;S3
+76;Lambda
+77;ECS
+78;Athena
+79;Redshift
+80;Kinesis
+81;CodeBuild
+82;DMS
+83;PostgreSQL
+84;Ab Initio
+85;DataStage
+86;Kubernetes
+87;MySQL
+88;EPM
+89;PBCS
+90;Hbase
+91;Hive
+92;Zendesk
+93;GCP
+94;Github
+95;Terraform
+96;Cloudera
+97;Data platform
+98;Docker
+99;Kubernetess
+100;COBOL
+101;IMS
+102;DB2
+103;Changeman
+104;z/OS Operating System (Aqua)
+105;Excel
+106;tSQL
+107;Power BI
+108;R
+109;PyTorch
+110;TensorFlow
+111;Scikit-learn
+112;Sigma
+113;Microsoft Excel
